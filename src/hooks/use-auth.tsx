@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => void;
   logout: () => Promise<void>;
 }
 
@@ -41,22 +41,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  const signInWithGoogle = async () => {
-    setLoading(true);
+  const signInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
+    signInWithPopup(auth, provider).catch((error) => {
       console.error('Error signing in with Google:', error);
       toast({
         variant: 'destructive',
         title: 'Sign In Failed',
-        description:
-          'Could not sign in with Google. Please try again.',
+        description: 'Could not sign in with Google. Please try again.',
       });
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   const logout = async () => {
@@ -66,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       router.push('/');
     } catch (error) {
       console.error('Error signing out:', error);
-       toast({
+      toast({
         variant: 'destructive',
         title: 'Sign Out Failed',
         description: 'Could not sign out. Please try again.',
