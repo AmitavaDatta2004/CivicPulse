@@ -15,11 +15,11 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 
 export function Header() {
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut();
+    await logout();
     router.push('/');
   };
 

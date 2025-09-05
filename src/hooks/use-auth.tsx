@@ -12,15 +12,17 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
   type User,
+  GoogleAuthProvider,
 } from 'firebase/auth';
-import { auth, provider } from '@/lib/firebase-client';
+import { auth } from '@/lib/firebase-client';
 import { useToast } from './use-toast';
+import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -40,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async () => {
     setLoading(true);
+    const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
     } catch (error) {
@@ -55,10 +59,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signOut = async () => {
+  const logout = async () => {
     setLoading(true);
     try {
       await firebaseSignOut(auth);
+      router.push('/');
     } catch (error) {
       console.error('Error signing out:', error);
        toast({
@@ -75,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     loading,
     signInWithGoogle,
-    signOut,
+    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
