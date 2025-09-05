@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { SplashScreen } from '@/components/splash-screen';
 import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/hooks/use-auth';
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -14,9 +15,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <>
+    <AuthProvider>
       {loading ? <SplashScreen /> : children}
       <Toaster />
-    </>
+    </AuthProvider>
   );
 }
