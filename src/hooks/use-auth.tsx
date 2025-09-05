@@ -54,7 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    setLoading(true);
     try {
       await firebaseSignOut(auth);
       router.push('/');
@@ -65,8 +64,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: 'Sign Out Failed',
         description: 'Could not sign out. Please try again.',
       });
-    } finally {
-      setLoading(false);
     }
   };
 
