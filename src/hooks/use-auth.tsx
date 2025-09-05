@@ -13,7 +13,7 @@ import {
   signOut as firebaseSignOut,
   type User,
 } from 'firebase/auth';
-import { auth, provider } from '@/lib/firebase';
+import { auth, provider } from '@/lib/firebase-client';
 import { useToast } from './use-toast';
 
 interface AuthContextType {
