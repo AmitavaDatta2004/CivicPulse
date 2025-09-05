@@ -26,21 +26,21 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md text-center">
+      <div className="w-full max-w-sm text-center">
         <div className="mb-8 flex justify-center text-primary">
           <Zap className="h-20 w-20" />
         </div>
-        <h1 className="text-5xl font-bold font-headline text-primary">
+        <h1 className="text-5xl font-bold font-headline text-foreground">
           CivicPulse
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Bridging the gap between citizens and municipal services.
+          Intelligent Civic Response
         </p>
-        <div className="mt-12">
+        <div className="mt-12 space-y-4">
           <Button
             onClick={signInWithGoogle}
             size="lg"
-            className="w-full font-bold"
+            className="w-full font-bold bg-white text-foreground border border-border shadow-sm hover:bg-secondary"
           >
             <svg
               role="img"
@@ -50,7 +50,7 @@ export default function LoginPage() {
             >
               <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.9 2.04-5.07 2.04-4.35 0-7.88-3.57-7.88-8s3.53-8 7.88-8c2.48 0 4.02.98 4.9 1.88l2.6-2.6C18.02 2.33 15.53 1 12.48 1 7.02 1 3 5.02 3 9.5s4.02 8.5 9.48 8.5c2.9 0 5.25-1 6.92-2.63 1.73-1.68 2.24-4.2 2.24-6.55 0-.45-.04-.85-.1-1.25h-9.56z"></path>
             </svg>
-            Sign in with Google
+            Continue with Google
           </Button>
         </div>
       </div>

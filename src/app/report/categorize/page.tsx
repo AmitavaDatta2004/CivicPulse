@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   CardFooter,
@@ -19,6 +20,7 @@ import {
   MoreHorizontal,
   ChevronLeft,
   Loader2,
+  Check,
 } from 'lucide-react';
 import type { IssueCategory } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -98,17 +100,21 @@ export default function CategorizePage() {
     }
   };
 
+  const handleCategorySelect = (category: IssueCategory) => {
+    setSelectedCategory(category);
+  };
+
   if (!image)
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        Loading...
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
 
   if (selectedCategory) {
     return (
-      <div className="min-h-screen bg-muted/40">
-        <header className="flex items-center border-b bg-background p-4">
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="flex items-center p-4 sticky top-0 bg-background/80 backdrop-blur-sm z-10">
           <Button
             variant="ghost"
             size="icon"
@@ -116,17 +122,16 @@ export default function CategorizePage() {
           >
             <ChevronLeft />
           </Button>
-          <h1 className="mx-auto font-headline text-xl font-bold">
-            Confirm & Submit
-          </h1>
+          <div className='flex-1 text-center font-semibold'>Step 3 of 3</div>
           <div className="w-10"></div>
         </header>
-        <main className="p-4">
-          <Card>
+        <main className="p-4 flex-1 flex flex-col">
+          <Card className='flex-1 flex flex-col'>
             <CardHeader>
-              <CardTitle>Confirm Submission</CardTitle>
+              <CardTitle className='font-headline text-2xl'>Confirm & Submit</CardTitle>
+              <CardDescription>Review the details before final submission.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 flex-1">
               <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                 <Image
                   src={image}
@@ -136,34 +141,28 @@ export default function CategorizePage() {
                 />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium">Category</p>
+                <p className="text-sm font-medium text-muted-foreground">Category</p>
                 <p className="text-lg font-semibold text-primary">
                   {selectedCategory}
                 </p>
               </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Location</p>
-                <p className="text-muted-foreground">
-                  123 City Hall Park, Los Angeles, CA
-                </p>
-              </div>
               {note && (
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">Note</p>
-                  <p className="italic text-muted-foreground">"{note}"</p>
+                  <p className="text-sm font-medium text-muted-foreground">Note</p>
+                  <p className="italic text-foreground/80">"{note}"</p>
                 </div>
               )}
             </CardContent>
             <CardFooter>
               <Button
                 onClick={handleSubmit}
-                className="w-full"
+                className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
                 size="lg"
                 disabled={isSubmitting}
               >
-                {isSubmitting && (
+                {isSubmitting ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
+                ) : <Check className="mr-2 h-4 w-4" />}
                 {isSubmitting ? 'Submitting...' : 'Submit Report'}
               </Button>
             </CardFooter>
@@ -174,36 +173,35 @@ export default function CategorizePage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/40">
-      <header className="flex items-center border-b bg-background p-4">
+    <div className="min-h-screen bg-background flex flex-col">
+        <header className="flex items-center p-4 sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/report">
             <ChevronLeft />
           </Link>
         </Button>
-        <h1 className="mx-auto font-headline text-xl font-bold">
-          Report an Issue (2/2)
-        </h1>
+        <div className='flex-1 text-center font-semibold'>Step 2 of 3</div>
         <div className="w-10"></div>
       </header>
-      <main className="p-4">
-        <Card>
+      <main className="p-4 flex-1">
+        <Card className='h-full'>
           <CardHeader>
-            <CardTitle>Select a Category</CardTitle>
+            <CardTitle className='font-headline text-2xl'>Select a Category</CardTitle>
+            <CardDescription>Choose the category that best describes the issue.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               {categories.map((cat) => (
                 <button
                   key={cat.name}
-                  onClick={() => setSelectedCategory(cat.name)}
+                  onClick={() => handleCategorySelect(cat.name)}
                   className={cn(
-                    'flex aspect-square flex-col items-center justify-center gap-2 rounded-lg border p-4 transition-all',
-                    'hover:border-accent hover:bg-accent/20'
+                    'flex aspect-square flex-col items-center justify-center gap-2 rounded-lg border-2 p-4 transition-all',
+                    'hover:border-primary/80 hover:bg-primary/5'
                   )}
                 >
-                  {cat.icon}
-                  <span className="text-center font-semibold">{cat.name}</span>
+                  <div className='text-primary'>{cat.icon}</div>
+                  <span className="text-center font-semibold text-foreground">{cat.name}</span>
                 </button>
               ))}
             </div>

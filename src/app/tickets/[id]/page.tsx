@@ -7,12 +7,13 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from '@/components/ui/card';
 import { MOCK_TICKETS } from '@/lib/mock-data';
 import type { TicketStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { ChevronLeft, MapPin } from 'lucide-react';
+import { ChevronLeft, MapPin, Calendar, Clock, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -20,9 +21,17 @@ import { notFound } from 'next/navigation';
 const statusColors: Record<TicketStatus, string> = {
     Submitted: 'border-primary/50 bg-primary/10 text-primary',
     Assigned: 'border-yellow-500/50 bg-yellow-500/10 text-yellow-600',
-    'In Progress': 'border-accent/50 bg-accent/10 text-accent',
+    'In Progress': 'border-accent/50 bg-accent/10 text-accent-foreground',
     Resolved: 'border-green-500/50 bg-green-500/10 text-green-600',
 };
+
+const statusTextColors: Record<TicketStatus, string> = {
+    Submitted: 'text-primary',
+    Assigned: 'text-yellow-600',
+    'In Progress': 'text-accent-foreground',
+    Resolved: 'text-green-600',
+};
+
 
 export default function TicketDetailPage({ params }: { params: { id: string } }) {
   const ticket = MOCK_TICKETS.find((t) => t.id === params.id);
@@ -30,16 +39,18 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
   if (!ticket) {
     notFound();
   }
+  
+  const isResolved = ticket.status === 'Resolved';
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/40">
+    <div className="flex min-h-screen flex-col bg-secondary">
       <Header />
       <main className="flex-1">
         <div className="container py-6">
           <div className="mb-4">
             <Button variant="ghost" asChild>
               <Link href="/tickets">
-                <ChevronLeft className="mr-2 h-4 w-4" /> Back to Tickets
+                <ChevronLeft className="mr-2 h-4 w-4" /> Back to My Tickets
               </Link>
             </Button>
           </div>
@@ -51,13 +62,13 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                   <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="font-headline text-2xl">
-                        {ticket.category} Issue
+                        {ticket.category}
                       </CardTitle>
-                      <p className="text-muted-foreground">
+                      <CardDescription>
                         Ticket ID: {ticket.id}
-                      </p>
+                      </CardDescription>
                     </div>
-                    <Badge className={cn('border-transparent font-semibold', statusColors[ticket.status])}>
+                    <Badge className={cn('border font-semibold', statusColors[ticket.status])}>
                       {ticket.status}
                     </Badge>
                   </div>
@@ -72,25 +83,29 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                       data-ai-hint={ticket.image.hint}
                     />
                   </div>
-                  <h3 className="mb-2 font-semibold">Description</h3>
-                  <p className="mb-4 text-muted-foreground">
-                    {ticket.description}
-                  </p>
+                  {ticket.description && (
+                    <>
+                      <h3 className="mb-2 font-semibold">Description</h3>
+                      <p className="mb-4 text-muted-foreground">
+                        {ticket.description}
+                      </p>
+                    </>
+                  )}
 
                   <h3 className="mb-2 font-semibold">AI Severity Assessment</h3>
-                  <div className="rounded-md border bg-muted p-3">
-                    <p className="text-muted-foreground">
-                      {ticket.justification}
+                  <div className="rounded-md border bg-background p-4">
+                     <p className="text-muted-foreground italic">
+                      "{ticket.justification}"
                     </p>
                   </div>
                 </CardContent>
               </Card>
 
-              {ticket.status === 'Resolved' && ticket.resolutionImage && (
-                <Card>
+              {isResolved && ticket.resolutionImage && (
+                <Card className='border-accent bg-accent/5'>
                   <CardHeader>
-                    <CardTitle className="font-headline text-xl">
-                      Proof of Resolution
+                    <CardTitle className="font-headline text-xl text-accent-foreground flex items-center gap-2">
+                      <CheckCircle /> Proof of Resolution
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -109,7 +124,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
             </div>
 
             <div className="space-y-6">
-              <Card>
+               <Card>
                 <CardHeader>
                   <CardTitle className="font-headline text-lg">
                     Status Timeline
@@ -134,21 +149,30 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <p className="font-medium">ETA:</p>
-                    <p className="text-muted-foreground">{ticket.eta}</p>
+                    <Clock className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">Estimated Resolution</p>
+                      <p className={cn("font-semibold", isResolved ? statusTextColors.Resolved : "text-muted-foreground")}>{ticket.eta}</p>
+                    </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <p className="font-medium">Reported:</p>
-                    <p className="text-muted-foreground">
-                      {format(ticket.submittedAt, 'PPp')}
-                    </p>
+                    <Calendar className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+                    <div>
+                        <p className="font-medium">Reported</p>
+                        <p className="text-muted-foreground">
+                        {format(ticket.submittedAt, 'PPp')}
+                        </p>
+                    </div>
                   </div>
                   {ticket.resolvedAt && (
                     <div className="flex items-start gap-3">
-                      <p className="font-medium">Resolved:</p>
-                      <p className="text-muted-foreground">
-                        {format(ticket.resolvedAt, 'PPp')}
-                      </p>
+                      <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+                       <div>
+                        <p className="font-medium">Resolved</p>
+                        <p className="text-muted-foreground">
+                            {format(ticket.resolvedAt, 'PPp')}
+                        </p>
+                       </div>
                     </div>
                   )}
                 </CardContent>
